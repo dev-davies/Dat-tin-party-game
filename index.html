@@ -130,7 +130,33 @@
         margin-top: 0;
         text-align: center;
       }
-      .rules p { font-size: 1rem; color: var(--gray-200); margin: 0; }
+      .rules h2, .team-setup-box h2 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 0.75rem;
+        color: var(--yellow-300);
+        margin-top: 0;
+        text-align: center;
+      }
+      .rules p { font-size: 1rem; color: var(--gray-200); margin: 0; line-height: 1.6; }
+      .rules ul { margin: 1rem 0; padding-left: 1.5rem; text-align: left; }
+      .rules li { margin-bottom: 0.5rem; color: var(--gray-200); }
+      .instructions-box {
+        background-color: var(--green-800);
+        padding: 1.5rem;
+        border-radius: 0.5rem;
+        box-shadow: 0 10px 15px -3px rgba(0,0,0,.1), 0 4px 6px -2px rgba(0,0,0,.05);
+        text-align: left;
+        width: 100%;
+        max-width: 28rem;
+        box-sizing: border-box;
+      }
+      .instructions-heading { font-size: 1.5rem; font-weight: 700; color: var(--yellow-400); text-align: center; margin-bottom: 1rem; }
+      .instructions-list { list-style-type: none; padding: 0; display: flex; flex-direction: column; gap: 1rem; }
+      .instruction-item { display: flex; gap: 1rem; align-items: flex-start; }
+      .instruction-icon { font-size: 1.5rem; min-width: 2rem; }
+      .instruction-text { font-size: 1rem; color: var(--gray-200); line-height: 1.5;}
+      .btn-play-now { margin-top: 1.5rem; width: 100%; font-size: 1.5rem; font-weight: 700; }
       
       .team-count-selector { display: flex; justify-content: space-around; gap: 1rem; }
       .team-count-btn {
@@ -405,17 +431,41 @@
   </head>
   <body>
     <main>
+      <!-- Welcome Screen -->
+      <div id="welcome-screen" class="screen active">
+        <div class="title-screen">
+          <h1>Dat Tin <span style="font-size: 75%">🇳🇬</span></h1>
+          <div class="instructions-box">
+             <div class="instructions-heading">How To Play</div>
+             <ul class="instructions-list">
+               <li class="instruction-item">
+                 <span class="instruction-icon">🗣️</span>
+                 <span class="instruction-text">Describe the green word (<strong>Dat Tin</strong>) to your teammates without saying it.</span>
+               </li>
+               <li class="instruction-item">
+                 <span class="instruction-icon">🚫</span>
+                 <span class="instruction-text">Avoid using any of the red forbidden words (<strong>No Talk Am!</strong>) listed below.</span>
+               </li>
+               <li class="instruction-item">
+                 <span class="instruction-icon">⏳</span>
+                 <span class="instruction-text">You have 60 seconds per round. Score as many points as possible!</span>
+               </li>
+               <li class="instruction-item">
+                 <span class="instruction-icon">🏆</span>
+                 <span class="instruction-text">The team with the most points after 3 rounds is the <strong>Champion!</strong></span>
+               </li>
+             </ul>
+             <button id="play-now-btn" class="btn btn-primary btn-play-now">Play Now</button>
+          </div>
+        </div>
+      </div>
+
       <!-- Team Selection Screen -->
-      <div id="team-selection-screen" class="screen active">
+      <div id="team-selection-screen" class="screen">
         <div class="title-screen">
           <h1>Dat Tin <span style="font-size: 75%">🇳🇬</span></h1>
           <div class="rules">
-            <h2>How To Play</h2>
-            <p>
-              Get your team to say the word at the top of the card, <strong style="color: var(--white)">Dat Tin</strong>.
-              <br/><br/>
-              You cannot say any of the forbidden words below, <strong style="color: var(--white)">No Talk Am!</strong>
-            </p>
+             <h2 style="margin-bottom: 0;">Select Teams</h2>
           </div>
           <div class="team-setup-box">
             <h2>Select number of teams to start</h2>
@@ -531,7 +581,7 @@
         ];
 
         // --- STATE ---
-        let gameState = 'TEAM_SELECTION';
+        let gameState = 'WELCOME';
         let roundScore = 0;
         let timeLeft = ROUND_DURATION;
         let countdownTime = COUNTDOWN_DURATION;
@@ -547,8 +597,8 @@
         const MAX_ROUNDS_PER_TEAM = 3;
 
         // --- DOM ELEMENTS ---
-        const screens = { teamSelection: document.getElementById('team-selection-screen'), game: document.getElementById('game-screen'), roundOver: document.getElementById('round-over-screen'), gameOver: document.getElementById('game-over-screen'), getReady: document.getElementById('get-ready-screen'), };
-        const buttons = { pass: document.getElementById('pass-btn'), correct: document.getElementById('correct-btn'), nextRound: document.getElementById('next-round-btn'), newGame: document.getElementById('new-game-btn'), teamCount: document.querySelectorAll('.team-count-btn'), playAgain: document.getElementById('play-again-btn'), skipCountdown: document.getElementById('skip-countdown-btn'), };
+        const screens = { welcome: document.getElementById('welcome-screen'), teamSelection: document.getElementById('team-selection-screen'), game: document.getElementById('game-screen'), roundOver: document.getElementById('round-over-screen'), gameOver: document.getElementById('game-over-screen'), getReady: document.getElementById('get-ready-screen'), };
+        const buttons = { playNow: document.getElementById('play-now-btn'), pass: document.getElementById('pass-btn'), correct: document.getElementById('correct-btn'), nextRound: document.getElementById('next-round-btn'), newGame: document.getElementById('new-game-btn'), teamCount: document.querySelectorAll('.team-count-btn'), playAgain: document.getElementById('play-again-btn'), skipCountdown: document.getElementById('skip-countdown-btn'), };
         const displays = { score: document.getElementById('score'), timer: document.getElementById('timer'), targetWord: document.getElementById('target-word'), forbiddenWordsList: document.getElementById('forbidden-words-list'), gameCard: document.getElementById('game-card'), currentTeamIndicator: document.getElementById('current-team-indicator'), scoreboard: document.getElementById('scoreboard'), winnerTeamName: document.getElementById('winner-team-name'), winnerTeamScore: document.getElementById('winner-team-score'), winnerDisplay: document.getElementById('winner-display'), finalWinnerTeamName: document.getElementById('final-winner-team-name'), finalWinnerTeamScore: document.getElementById('final-winner-team-score'), finalScoreboard: document.getElementById('final-scoreboard'), countdownNumber: document.getElementById('countdown-number'), countdownMessage: document.getElementById('countdown-message'), };
 
         // --- ANIMATION HELPER ---
@@ -571,7 +621,7 @@
         // --- GAME LOGIC ---
         const shuffleArray = (array) => { for (let i = array.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [array[i], array[j]] = [array[j], array[i]]; } return array; };
         
-        const renderScreen = () => { Object.values(screens).forEach(screen => screen.classList.remove('active')); if (gameState === 'TEAM_SELECTION') screens.teamSelection.classList.add('active'); if (gameState === 'GET_READY') screens.getReady.classList.add('active'); if (gameState === 'PLAYING') screens.game.classList.add('active'); if (gameState === 'ROUND_OVER') screens.roundOver.classList.add('active'); if (gameState === 'GAME_OVER') screens.gameOver.classList.add('active'); };
+        const renderScreen = () => { Object.values(screens).forEach(screen => screen.classList.remove('active')); if (gameState === 'WELCOME') screens.welcome.classList.add('active'); if (gameState === 'TEAM_SELECTION') screens.teamSelection.classList.add('active'); if (gameState === 'GET_READY') screens.getReady.classList.add('active'); if (gameState === 'PLAYING') screens.game.classList.add('active'); if (gameState === 'ROUND_OVER') screens.roundOver.classList.add('active'); if (gameState === 'GAME_OVER') screens.gameOver.classList.add('active'); };
 
         const updateCard = () => {
           const card = shuffledCards[currentCardIndex];
@@ -716,10 +766,17 @@
           renderScreen();
         };
 
+        const showTeamSelection = () => {
+             gameState = 'TEAM_SELECTION';
+             renderScreen();
+             animateElement(document.querySelector('#team-selection-screen > .title-screen'), 'fadeIn', 800);
+        };
+
         const handleCorrect = () => { roundScore++; displays.score.textContent = roundScore; animateElement(displays.score, 'tada', 800); nextCard(); };
         const handlePass = () => { nextCard(); };
 
         // --- EVENT LISTENERS ---
+        buttons.playNow.addEventListener('click', showTeamSelection);
         buttons.teamCount.forEach(button => { button.addEventListener('click', (e) => setupAndStartGame(parseInt(e.target.dataset.teams))); });
         buttons.nextRound.addEventListener('click', startCountdown);
         buttons.newGame.addEventListener('click', resetGame);
@@ -730,7 +787,7 @@
         
         // --- INITIAL RENDER ---
         renderScreen();
-        animateElement(document.querySelector('#team-selection-screen > .title-screen'), 'fadeIn', 800);
+        animateElement(document.querySelector('#welcome-screen > .title-screen'), 'fadeIn', 800);
       });
     </script>
   </body>
